@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZBO_MOCKING_MESSAGE</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>messages to handle RAP BO mocking exceptions</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBO_MOCKING_MESSAGE</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Entity instance &amp;1 does not exist</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBO_MOCKING_MESSAGE</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>No entity instances found in the buffer</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBO_MOCKING_MESSAGE</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Configuring &amp;1 as well as &amp;2 for &amp;3 is undefined.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBO_MOCKING_MESSAGE</ARBGB>
+     <MSGNR>004</MSGNR>
+     <TEXT>Record the instance before configuring &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZBO_MOCKING_MESSAGE</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>Unauthorised: &amp;1</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_ABAP_BEHV_TEST_TRANS_BUFR</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>ABAP Behavior Test Transactional Buffer Double</DESCRIPT>
+    <EXPOSURE>2</EXPOSURE>
+    <STATE>1</STATE>
+    <UNICODE>X</UNICODE>
+   </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_ABAP_BEHV_TEST_TRANS_BUFR</CLSNAME>
+     <CMPNAME>CONFIG_ERROR_RESPONSE_4_MODIFY</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Trying out!!! Configure reported and failed for modify</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_ABAP_BEHV_TEST_TRANS_BUFR</CLSNAME>
+     <CMPNAME>CONFIG_ERROR_RESPONSE_4_READ</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Trying out!!! Configure reported  and failed for read</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_ABAP_BEHV_TEST_TRANS_BUFR</CLSNAME>
+     <CMPNAME>CONFIG_RESPONSE_4_MODIFY</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Trying out!!! Configure response for modify</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_ABAP_BEHV_TEST_TRANS_BUFR</CLSNAME>
+     <CMPNAME>MODIFY</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Modify transactional buffer double</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_ABAP_BEHV_TEST_TRANS_BUFR</CLSNAME>
+     <CMPNAME>READ</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Read from transaction buffer double</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
