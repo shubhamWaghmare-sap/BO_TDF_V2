@@ -24,6 +24,8 @@ class zcl_abap_behv_test_trans_bufr6 definition public final create private.
      "! <p class="shorttext synchronized" lang="en">Transactional buffer double singleton instance</p>
      double_transactional_buffer type ref to zif_abap_behv_test_trans_bufr6.
 
+    data: cid_map_helper type ref to zcl_abap_behv_cid_mapper.
+
     data:
      "! <p class="shorttext synchronized" lang="en">Transactional buffer double</p>
       dbl_transactional_buffer_table type standard table of zif_abap_behv_test_trans_bufr6=>ty_double_transactional_buffer with key entity_name.
@@ -32,6 +34,7 @@ class zcl_abap_behv_test_trans_bufr6 definition public final create private.
     constants: c_message_class type symsgid value 'ZBO_MOCKING_MESSAGE'.
 
     methods:
+      constructor,
 
       fill_read_reported_and_failed
         importing
@@ -562,13 +565,31 @@ class zcl_abap_behv_test_trans_bufr6 implementation.
     assign change-instances->* to <input_entity_instances>.
 
     loop at <input_entity_instances> assigning <input_entity_instance>.
+
+      " Check if cid-ref value is provided
+      field-symbols <cid> type abp_behv_cid.
+      assign component cl_abap_behv=>co_techfield_name-cid_ref of structure <input_entity_instance> to <cid>.
+      if <cid> is not initial.
+        data(instance) = buffer_4_entity-entity_instances_w_cid[ cid = <cid> ].
+        assign instance-inst->* to field-symbol(<instance_to_check>).
+        "check whether the entity instance is already present in the buffer
+        data(instance_exists_in_buffer) = zcl_abap_behv_buf_util=>check_instance_exists(
+                           exporting
+                             instance_to_check = <instance_to_check>
+                             entity_instances  = <instances_4_entity_in_buffer>
+                             entity_fields     = entity_fields
+                             ).
+        move-corresponding <instance_to_check> to <input_entity_instance>.
+
+      else.
       "check whether the entity instance is already present in the buffer
-      data(instance_exists_in_buffer) = zcl_abap_behv_buf_util=>check_instance_exists(
+        instance_exists_in_buffer = zcl_abap_behv_buf_util=>check_instance_exists(
                          exporting
                            instance_to_check = <input_entity_instance>
                            entity_instances  = <instances_4_entity_in_buffer>
                            entity_fields     = entity_fields
                            ).
+      endif.
 
       data buffer_4_assoc_entity type zif_abap_behv_test_trans_bufr6=>ty_double_transactional_buffer.
       data struct_descr_assoc_entity type ref to cl_abap_structdescr.
@@ -713,6 +734,23 @@ class zcl_abap_behv_test_trans_bufr6 implementation.
           <assoc_entity_buffer_instance> = corresponding #( <input_assoc_entity_instance> ).
           append <assoc_entity_buffer_instance> to <assoc_entity_buff_instances>.
 
+          " Maintain cid value to instance row
+          clear <cid>.
+          assign component cl_abap_behv=>co_techfield_name-cid of structure <input_assoc_entity_instance> to <cid>.
+          if <cid> is not initial.
+            data cid_to_inst_map type zif_abap_behv_test_trans_bufr6=>ty_cid_to_inst_map.
+            create data cid_to_inst_map-inst like <input_assoc_entity_instance>.
+
+            cid_to_inst_map-cid = <cid>.
+            assign cid_to_inst_map-inst->* to field-symbol(<inst>).
+            <inst> = <input_assoc_entity_instance>.
+
+            assign dbl_transactional_buffer_table[ entity_name = associated_entity  ] to field-symbol(<buffer_4_assoc_entity>).
+            append cid_to_inst_map to <buffer_4_assoc_entity>-entity_instances_w_cid.
+
+          endif.
+
+
           " Fill mapped table
           fill_modify_mapped(
             exporting
@@ -722,7 +760,7 @@ class zcl_abap_behv_test_trans_bufr6 implementation.
              change = change
             changing
               c_mapped = mapped
-              cs_change_instance = <assoc_entity_buffer_instance> ).
+              cs_change_instance = <input_assoc_entity_instance> ).
         endif.
       endloop.
     endloop.
@@ -731,11 +769,11 @@ class zcl_abap_behv_test_trans_bufr6 implementation.
 
   method _create.
 
-    data buffer_4_entity type zif_abap_behv_test_trans_bufr6=>ty_double_transactional_buffer.
     data entity_buffer_instance type ref to data.
     data struct_descr_4_entity type ref to cl_abap_structdescr.
     data entity_fields type ddfields.
 
+    data buffer_4_entity type zif_abap_behv_test_trans_bufr6=>ty_double_transactional_buffer.
     field-symbols <instances_4_entity_in_buffer> type standard table.
     field-symbols <input_entity_instances> type standard table.
     field-symbols <input_entity_instance> type any.
@@ -753,6 +791,7 @@ class zcl_abap_behv_test_trans_bufr6 implementation.
                                                       p_op       = if_abap_behv=>op-r-read "TODO : Should it be modify/read?
                                                       p_kind     = if_abap_behv=>typekind-result
                                                  ).
+
       append buffer_4_entity to dbl_transactional_buffer_table.
     endif.
 
@@ -833,6 +872,22 @@ class zcl_abap_behv_test_trans_bufr6 implementation.
         assign entity_buffer_instance->* to <entity_buffer_instance>.
         <entity_buffer_instance> = corresponding #( <input_entity_instance> ).
         append <entity_buffer_instance> to <instances_4_entity_in_buffer>.
+
+        " Maintain cid value to instance row
+        field-symbols <cid> type abp_behv_cid.
+        assign component cl_abap_behv=>co_techfield_name-cid of structure <input_entity_instance> to <cid>.
+        if <cid> is not initial.
+          data cid_to_inst_map type zif_abap_behv_test_trans_bufr6=>ty_cid_to_inst_map.
+          create data cid_to_inst_map-inst like <input_entity_instance>.
+
+          cid_to_inst_map-cid = <cid>.
+          assign cid_to_inst_map-inst->* to field-symbol(<inst>).
+          <inst> = <input_entity_instance>.
+
+          assign dbl_transactional_buffer_table[ entity_name = change-entity_name  ] to field-symbol(<buffer_4_entity>).
+          append cid_to_inst_map to <buffer_4_entity>-entity_instances_w_cid.
+
+        endif.
 
         " Fill mapped table
         fill_modify_mapped(
@@ -1538,6 +1593,10 @@ class zcl_abap_behv_test_trans_bufr6 implementation.
 
   method zif_abap_behv_test_trans_bufr6~clear_buffer.
     clear dbl_transactional_buffer_table.
+  endmethod.
+
+  method constructor.
+    cid_map_helper = new zcl_abap_behv_cid_mapper(  ).
   endmethod.
 
 endclass.

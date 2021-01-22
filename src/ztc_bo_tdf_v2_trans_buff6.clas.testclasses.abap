@@ -34,12 +34,14 @@ class ltcl_modify_eml definition final for testing
     methods teardown.
     class-methods class_setup.
     class-data double type ref to zcl_abap_behv_generic_tst_dbl6.
+    class-data cds_test_environment type ref to if_cds_test_environment.
 endclass.
 
 
 class ltcl_modify_eml implementation.
 
   method class_setup.
+
     double = new zcl_abap_behv_generic_tst_dbl6( '/dmo/i_travel_tum' ).
     cl_abap_behv_test_environment=>set_test_double( double ).
 
@@ -798,20 +800,12 @@ class ltcl_modify_eml implementation.
 
     " Create a BO instance using Deep Create
     modify entities of /dmo/i_travel_tum
-       " Create a booking supplement by association
-       entity booking
-             create by \_BookSuppl fields ( supplementid price  ) with
-                       value #( ( %cid_ref = 'CID_200'
-                                  %target  = value #( (
-                                                 %cid          = 'CID_300'
-                                                 supplementid  = '007'
-                                                 price         = 100
-                                                  ) ) ) )
      entity travel
              create fields ( travelid customerid begindate enddate status ) with
                          value #( ( %cid        = 'CID_100'    " Preliminary ID for new travel instance
                                     travelid    = '987'
                                     customerid  = '9876'
+                                    AgencyID    = '70006'
                                     begindate   = '20180101'
                                     enddate     = '20180101'
                                     status      = 'O' ) ) "Travel status open
@@ -823,8 +817,16 @@ class ltcl_modify_eml implementation.
                                                   customerid     = '9876'
                                                   flightprice     = 100
                                                   BookingDate   = '20180101' ) ) ) )
-             execute set_status_booked from
-                         value #( ( %cid_ref = 'CID_100') )
+       " Create a booking supplement by association
+       entity booking
+             create by \_BookSuppl fields ( supplementid price  ) with
+                       value #( ( %cid_ref = 'CID_200'
+                                  %target  = value #( (
+                                                 %cid          = 'CID_300'
+                                                 supplementid  = '007'
+                                                 price         = 100
+                                                  ) ) ) )
+
        MAPPED   DATA(mapped)
        FAILED   DATA(failed)
        REPORTED DATA(reported).
@@ -2459,7 +2461,7 @@ class ltcl_eml_w_response_config implementation.
 
   method mapped_n_failed_configured.
   " If both mapped and failed are configured for an instance+operation
-  " an execption must be thrown. (TODO)
+  " an execption must be thrown.
 
   "CUT has create EML.
   "Step 1: Record the instance for which create EML has to be evaluated.
@@ -2487,25 +2489,13 @@ class ltcl_eml_w_response_config implementation.
     mapped-travel = value #( ( TravelID = '987' ) ).
     failed-travel = value #( ( TravelID = '987' %fail-cause = if_abap_behv=>cause-unspecific ) ).
 
-    double->config_response_4_modify( operation = if_abap_behv=>op-m-create mapped = mapped failed = failed reported = reported ).
-
-
-  " CUT
-    modify entities of /dmo/i_travel_tum
-     entity travel
-       create from value #( ( travelid = '987'
-                              begindate = '20180101' EndDate = '20180101'
-                              totalprice = 100
-                              %control-begindate = if_abap_behv=>mk-on
-                              %control-totalprice = if_abap_behv=>mk-on )
-                          )
-     reported data(reported_cut)
-     failed data(failed_cut)
-     mapped data(mapped_cut).
-
-    cl_abap_unit_assert=>assert_not_initial( mapped_cut ).
-    cl_abap_unit_assert=>assert_initial( failed_cut ).
-    cl_abap_unit_assert=>assert_initial( reported_cut ).
+    try.
+      double->config_response_4_modify( operation = if_abap_behv=>op-m-create mapped = mapped failed = failed reported = reported ).
+      catch zcx_bo_tdf_failure into data(lx_exception).
+        data(act) = new zcx_bo_tdf_failure( textid = zcx_bo_tdf_failure=>incorrect_response_config
+        preconfigured = 'mapped' new_configuration = 'failed' ).
+        cl_abap_unit_assert=>assert_equals( exp = lx_exception->get_text( ) act = act->get_text( ) ).
+    endtry.
 
 
   endmethod.
@@ -2540,25 +2530,13 @@ class ltcl_eml_w_response_config implementation.
     "Configure failed for travelID 988 which is not recorded.
     failed-travel = value #( ( TravelID = '988' %fail-cause = if_abap_behv=>cause-unspecific ) ).
 
-    double->config_response_4_modify( operation = if_abap_behv=>op-m-create mapped = mapped failed = failed reported = reported ).
-
-  " CUT
-    modify entities of /dmo/i_travel_tum
-     entity travel
-       create from value #( ( travelid = '987'
-                              begindate = '20180101' EndDate = '20180101'
-                              totalprice = 100
-                              %control-begindate = if_abap_behv=>mk-on
-                              %control-totalprice = if_abap_behv=>mk-on )
-                          )
-     reported data(reported_cut)
-     failed data(failed_cut)
-     mapped data(mapped_cut).
-
-    cl_abap_unit_assert=>assert_not_initial( mapped_cut ).
-    cl_abap_unit_assert=>assert_initial( failed_cut ).
-    cl_abap_unit_assert=>assert_initial( reported_cut ).
-
+    try.
+      double->config_response_4_modify( operation = if_abap_behv=>op-m-create mapped = mapped failed = failed reported = reported ).
+      catch zcx_bo_tdf_failure into data(lx_exception).
+        data(act) = new zcx_bo_tdf_failure( textid = zcx_bo_tdf_failure=>entity_not_recorded
+         new_configuration = 'failed' ).
+        cl_abap_unit_assert=>assert_equals( exp = lx_exception->get_text( ) act = act->get_text( ) ).
+    endtry.
 
   endmethod.
 

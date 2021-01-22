@@ -13,6 +13,12 @@ interface zif_abap_behv_test_trans_bufr6
       end of   ty_modify_response_config.
 
     types:
+      begin of ty_cid_to_inst_map,
+        cid   type abp_behv_cid,
+        inst  type ref to data ,
+      end of   ty_cid_to_inst_map.
+
+    types:
       begin of ty_read_response_config,
         operation type if_abap_behv=>t_char01,
         result    type ref to data,
@@ -24,6 +30,7 @@ interface zif_abap_behv_test_trans_bufr6
              entity_root            type abp_root_entity_name,
              entity_name            type abp_entity_name,
              entity_alias           type abp_entity_name,
+             entity_instances_w_cid type standard table of ty_cid_to_inst_map with key cid,
              entity_instances       type ref to data,
              modify_response_config type standard table of ty_modify_response_config with key operation,
              read_response_config   type standard table of ty_read_response_config with key operation,
