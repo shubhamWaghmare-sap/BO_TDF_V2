@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>ZCL_ABAP_BEHV_GENERIC_TEST_DBL</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>Generic Test Double for Abap Behavior Test Environment</DESCRIPT>
+    <DESCRIPT>Generic Test Double for Abap Behavior Test Env</DESCRIPT>
     <CATEGORY>05</CATEGORY>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
