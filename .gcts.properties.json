@@ -1,0 +1,14 @@
+{
+  "name": "zmy_swc_zi517012",
+  "version": "1.0.0",
+  "description": "ZMY_SWC_ZI517012",
+  "repositoryLayout": {
+    "formatVersion": 6,
+    "format": "json",
+    "metaInformation": ".gctsmetadata/",
+    "tableContent": "true",
+    "readableSource": "false",
+    "keepClient": "false",
+    "fingerprintSeckey": "/BYOG/FPRINT_RT/AAE49D9619381FE08DD993AD9B76506F_0"
+  }
+}
